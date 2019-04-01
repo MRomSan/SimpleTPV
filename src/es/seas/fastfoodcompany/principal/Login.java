@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
@@ -124,18 +125,18 @@ public class Login extends javax.swing.JFrame {
     /**
      * Devuelve el campo de texto Password
      *
-     * @return JTextField
+     * @return JPasswordField
      */
-    public JTextField getTxtPassword() {
+    public JPasswordField getTxtPassword() {
         return txtPassword;
     }
 
     /**
      * Establece el campo de texto Password
      *
-     * @param txtPassword JTextField
+     * @param txtPassword JPasswordField
      */
-    public void setTxtPassword(JTextField txtPassword) {
+    public void setTxtPassword(JPasswordField txtPassword) {
         this.txtPassword = txtPassword;
     }
 
@@ -170,8 +171,8 @@ public class Login extends javax.swing.JFrame {
         lblUsername = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         lblPassword = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login - FFC");
@@ -192,6 +193,13 @@ public class Login extends javax.swing.JFrame {
 
         lblPassword.setText("Contraseña:");
 
+        btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+
         txtPassword.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtPasswordFocusGained(evt);
@@ -200,13 +208,6 @@ public class Login extends javax.swing.JFrame {
         txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPasswordActionPerformed(evt);
-            }
-        });
-
-        btnLogin.setText("Login");
-        btnLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoginActionPerformed(evt);
             }
         });
 
@@ -225,7 +226,8 @@ public class Login extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(2, 2, 2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelContenedorLayout.setVerticalGroup(
@@ -237,8 +239,8 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(lblUsername))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelContenedorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblPassword))
+                    .addComponent(lblPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLogin)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -266,13 +268,13 @@ public class Login extends javax.swing.JFrame {
         HacerLogin();
     }//GEN-LAST:event_txtUsernameActionPerformed
 
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
-        HacerLogin();
-    }//GEN-LAST:event_txtPasswordActionPerformed
-
     private void txtUsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsernameFocusGained
         ((JTextField)evt.getComponent()).selectAll();
     }//GEN-LAST:event_txtUsernameFocusGained
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        HacerLogin();
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     private void txtPasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPasswordFocusGained
         ((JTextField)evt.getComponent()).selectAll();
@@ -297,7 +299,8 @@ public class Login extends javax.swing.JFrame {
         }
         
         //Comprueba que no haya campos vacíos
-        if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty()) {
+        if (txtUsername.getText().isEmpty() || 
+                txtPassword.getPassword().length == 0) {
             JOptionPane.showMessageDialog(null, "Debe rellenar todos los campos",
             "Campo vacío", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -305,13 +308,14 @@ public class Login extends javax.swing.JFrame {
             existeUsuarioenBD = empleadoDAO.existeUsuario(txtUsername.getText());
             if (existeUsuarioenBD || (hayAdministrador == false && 
                     txtUsername.getText().equals("admin"))) {
+                //Guardo la contraseña en una cadena String
+                String password = String.valueOf(txtPassword.getPassword());
                 //Comprueba que el usuario y la contraseña sean correctos
                 empleado = empleadoDAO.login(txtUsername.getText(), 
-                        txtPassword.getText());
+                        password);
                 if (empleado != null || 
                         (hayAdministrador == false && txtUsername.getText().
-                        equals("admin") && txtPassword.getText().
-                        equals("1234"))) {
+                        equals("admin") && password.equals("1234"))) {
                     //Una vez comprobado que los campos están rellenos y el
                     //usuario y clave son correctos se procede a abrir
                     //la aplicación
@@ -379,7 +383,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel panelContenedor;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
